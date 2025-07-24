@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import Search from "./Search";
 
 const EntryList = () => {
   const [entries, setEntries] = useState([]);
   const [selectedEntry, setSelectedEntry] = useState(null); // Fokus-Modus
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem("entries") || "[]");
@@ -20,34 +22,42 @@ const EntryList = () => {
     setEntries(updatedEntries);
     setSelectedEntry(null); // Modal schließen
   };
+
   return (
     <>
+      <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {entries.map((entry, index) => (
-          <div
-            key={index}
-            className="card bg-base-100 shadow-xl border border-base-300 hover:scale-[1.01] transition cursor-pointer"
-            onClick={() => setSelectedEntry(entry)}
-          >
-            {entry.imageUrl && (
-              <figure>
-                <img
-                  src={entry.imageUrl}
-                  alt="Tagebuchbild"
-                  className="h-48 w-full object-cover"
-                />
-              </figure>
-            )}
+        {entries
+          .filter(
+            (entry) =>
+              entry.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              entry.content.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+          .map((entry, index) => (
+            <div
+              key={index}
+              className="card bg-base-100 shadow-xl border border-base-300 hover:scale-[1.01] transition cursor-pointer"
+              onClick={() => setSelectedEntry(entry)}
+            >
+              {entry.imageUrl && (
+                <figure>
+                  <img
+                    src={entry.imageUrl}
+                    alt="Tagebuchbild"
+                    className="h-48 w-full object-cover"
+                  />
+                </figure>
+              )}
 
-            <div className="card-body">
-              <h2 className="card-title">{entry.title}</h2>
-              <p className="text-sm text-gray-500">
-                {new Date(entry.createdAt).toLocaleDateString()}
-              </p>
-              <p className="line-clamp-3">{entry.content}</p>
+              <div className="card-body">
+                <h2 className="card-title">{entry.title}</h2>
+                <p className="text-sm text-gray-500">
+                  {new Date(entry.createdAt).toLocaleDateString()}
+                </p>
+                <p className="line-clamp-3">{entry.content}</p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
 
       {/* Fokus-Modal */}
