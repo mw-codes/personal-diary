@@ -8,29 +8,37 @@ const Modal = () => {
   const [content, setContent] = useState("");
 
   const handleSave = () => {
-    /* Bei leerem Feld wird nichts gespeichert*/
     if (!title.trim() || !content.trim()) return;
-    /* Neuen Eintrag erstellen  */
+
+    const today = new Date(date).toISOString().slice(0, 10); // Normiertes Datum
+
+    const existing = JSON.parse(localStorage.getItem("entries") || "[]");
+
+    // Gibt es schon einen Eintrag für dieses Datum?
+    const alreadyExists = existing.some((entry) => entry.date === today);
+
+    if (alreadyExists) {
+      alert(
+        "🧘 Du hast heute bereits einen Eintrag gemacht. Komm morgen wieder – bewusst leben statt durchjagen 🙏"
+      );
+      return;
+    }
+
     const newEntry = {
       title,
-      date,
+      date: today,
       imageUrl,
       content,
       createdAt: new Date().toISOString(),
     };
-    /* Bei Bedarf local Storage mit leerem Array initialisieren */
-    const existing = JSON.parse(localStorage.getItem("entries") || "[]");
-    /** Neuen Eintrag an die Liste anfügen  */
+
     const updated = [...existing, newEntry];
-    /* Als Text die LIste im local Storage speichern mit stringify */
     localStorage.setItem("entries", JSON.stringify(updated));
 
-    /* Formular leeren */
     setTitle("");
     setDate(new Date().toISOString().slice(0, 10));
     setImageUrl("");
     setContent("");
-    /* Modal ausblenden indem das versteckte checkbox Element auf false gesetzt wir*/
     document.getElementById("new-entry-modal").checked = false;
   };
 
