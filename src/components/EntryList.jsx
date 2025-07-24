@@ -13,27 +13,38 @@ const EntryList = () => {
   }
 
   return (
-    <ul className="space-y-4">
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
       {entries.map((entry, index) => (
-        <li key={index} className="p-4 bg-base-100 rounded shadow">
-          <p className="text-xs text-gray-400">
-            Eingetragen am: {new Date(entry.createdAt).toLocaleString()}
-          </p>
-          <h3 className="text-lg font-semibold">{entry.title}</h3>
-          <p className="text-sm text-gray-500">Datum: {entry.date}</p>
-
+        <div
+          key={index}
+          className="card bg-base-100 shadow-xl border border-base-300"
+        >
           {entry.imageUrl && (
-            <img
-              src={entry.imageUrl}
-              alt="Tagebucheintrag"
-              className="mt-2 max-h-48 object-cover rounded"
-            />
+            <figure>
+              <img
+                src={entry.imageUrl}
+                alt="Tagebucheintrag Bild"
+                className="h-48 w-full object-cover"
+              />
+            </figure>
           )}
 
-          <p className="mt-2 whitespace-pre-wrap">{entry.content}</p>
-        </li>
+          <div className="card-body">
+            <h2 className="card-title">{entry.title}</h2>
+
+            <p className="text-sm text-gray-500">
+              Eingetragen am {new Date(entry.createdAt).toLocaleDateString()}
+            </p>
+
+            <p className="whitespace-pre-wrap mt-2">{entry.content}</p>
+
+            <div className="card-actions justify-end">
+              <span className="badge badge-outline">{entry.date}</span>
+            </div>
+          </div>
+        </div>
       ))}
-    </ul>
+    </div>
   );
 };
 
